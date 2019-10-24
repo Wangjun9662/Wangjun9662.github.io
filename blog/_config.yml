@@ -3,17 +3,23 @@
 ## Source: https://github.com/hexojs/hexo/
 
 # Site
-title: Hexo
+title: Jason's blog
 subtitle:
-description:
+description: Jason's blog
 keywords:
-author: John Doe
-language: en
+  - Jason
+  - Javascript
+  - CSS
+  - HTML
+  - 前端
+  - 博客
+author: Jason
+language: zh-cn
 timezone:
 
 # URL
 ## If your site is put in a subdirectory, set url as 'http://yoursite.com/child' and root as '/child/'
-url: http://yoursite.com
+url: https://wangjun9662.com
 root: /
 permalink: :year/:month/:day/:title/
 permalink_defaults:
@@ -40,7 +46,7 @@ external_link:
   exclude:
 filename_case: 0
 render_drafts: false
-post_asset_folder: false
+post_asset_folder: true
 relative_link: false
 future: true
 highlight:
@@ -84,7 +90,7 @@ pagination_dir: page
 # Extensions
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
-theme: landscape
+theme: tranquilpeak
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
