@@ -98,3 +98,14 @@ deploy:
   type: git
   repo: git@github.com:Wangjun9662/Wangjun9662.github.io.git
   branch: master
+
+Plugins:
+  - hexo-generator-baidu-sitemap
+  - hexo-generator-sitemap
+
+## Sitemap
+sitemap:
+  path: sitemap.xml
+# Baidusitemap
+baidusitemap:
+  path: baidusitemap.xml
