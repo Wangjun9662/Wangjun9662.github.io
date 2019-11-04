@@ -15,7 +15,7 @@
         <link rel="icon" href="https://wangjun9662.com/assets/images/logo.png">
     
     
-    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Jason","sameAs":["https://github.com/Wangjun9662/Wangjun9662.github.io/tree/master","mailto:742249657@qq.com"],"image":"avatar.jpeg"},"articleBody":"\n更新中......\n","dateCreated":"2019-10-26T17:57:16+08:00","dateModified":"2019-10-29T00:11:07+08:00","datePublished":"2019-10-26T17:57:16+08:00","description":"\n学习ES6的总结。\n","headline":"ES6学习系列：let和const","image":["https://raw.githubusercontent.com/Wangjun9662/blog-pic/master/images/hexo.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://wangjun9662.com/2019/10/26/es6/"},"publisher":{"@type":"Organization","name":"Jason","sameAs":["https://github.com/Wangjun9662/Wangjun9662.github.io/tree/master","mailto:742249657@qq.com"],"image":"avatar.jpeg","logo":{"@type":"ImageObject","url":"avatar.jpeg"}},"url":"https://wangjun9662.com/2019/10/26/es6/","keywords":"ES6, Javascript, let, const","thumbnailUrl":"https://raw.githubusercontent.com/Wangjun9662/blog-pic/master/images/hexo.png"}</script>
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Jason","sameAs":["https://github.com/Wangjun9662/Wangjun9662.github.io/tree/master","mailto:742249657@qq.com"],"image":"avatar.jpeg"},"articleBody":"\n\n\n块级作用域我们都知道，在ES5中只有全局作用域和函数作用域，不存在块级作用域。这样就会导致一些不合理的场景，最经典的一个就是for循环中的计数变量泄露为全局变量，如下：\n12345678910let arr = [];for(var i = 0; i &lt; 10; i++) &#123;    arr.push(() =&gt; &#123;        console.log(i);    &#125;);&#125;arr[0](); // 10arr[1](); // 10......arr[9](); // 10\n因为没有块级作用域，所以函数执行时，在该作用域下访问到的都是同一个i，而此时for循环已经执行完，i的值是10，所以最后输出的都是10。\n另外一个常见问题就是，内层变量会覆盖掉外层的变量，如下：\n123456var bar = &apos;hello&apos;;function foo() &#123;    console.log(bar);    var bar = &apos;world&apos;;&#125;foo(); // undefined\n由于变量声明提升，函数执行后并没有输出外层的bar，而是输出的undefined。\nlet命令let命令的用法类似于var，用来声明变量。不同之处主要有以下几点：\n1）只在当前作用域有效\n也就是说，在作用域外是访问不到作用域内的变量的，这就相当于给Javascript增加了块级作用域，在外部访问块级作用域内声明的变量是会报错的。\n1234&#123;    let bar = &apos;hello&apos;;&#125;console.log(bar); // ReferenceError: bar is not defined\nES6中块级作用域必须使用{}包起来。\n\n\n对于上述的第一个不合理的场景（for循环中的计数变量泄露为全局变量），如果将var改为let来声明i，就会得到我们想要的结果。\n12345678910let arr = [];for(let i = 0; i &lt; 10; i++) &#123;    arr.push(() =&gt; &#123;        console.log(i);    &#125;);&#125;arr[0](); // 0arr[1](); // 1......arr[9](); // 9\n每一轮循环都是一个独立的作用域，都会新声明一个i，因此i只在当前的作用域中生效。\n注意：for循环中，声明变量和循环体是两个不同的作用域，并且是父子作用域。\n\n\n\n2）没有变量声明提升\n\n在ES5中是存在变量声明提升的，这也是导致上述第二种不合理场景的原因。但使用let声明的变量是不存在变量声明提升的，必须先声明，再使用。在使用了let或者const的区块中，变量在声明之前使用会报错，这被称为“暂时性死区”。因此，ES5中绝对安全的操作typeof也不再安全。\n\n1234567ES6:typeof bar; // ReferenceErrorlet bar = &apos;hello&apos;;ES5:typeof bar; // undefinedvar bar = &apos;hello&apos;;\n暂时性死区和let、const命令不存在变量声明提升，主要是为了减少运行时错误，防止变量在声明前就使用，以免产生意想不到的错误。\n3）不能重复声明\n同一个作用域下，不能重复声明同一个变量，否则会报错。\nconst命令const是用来声明常量的，和let命令一样，const命令也只在当前作用域有效、不存在变量声明提升、存在暂时性死区、不能重复声明。另外一个不同的点就是，使用const声明的常量，不能再被改变。这样一来，const声明常量的时候，必须得赋值，不能留在以后再赋值。\n\n123const bar; // SyntaxError: Missing initializer in const declarationconst bar = &apos;hello&apos;;const bar = &apos;world&apos;; // TypeError: Assignment to constant variable.\n本质：const不能被改变的实际上是常量所指向的那个内存地址的值。如果使用const声明基本类型数据，const相当于保存的是数据本身，该常量是不能被改变的；如果const声明的是一个引用类型数据，常量保存的是引用地址，只是该地址不能被改变，该地址所指向的数据是可以被改变的。\n\n123const arr = [];arr.push(0); // 不会报错arr = []; //TypeError: Assignment to constant variable.\n如果真的想冻结对象，可以使用Object.freeze()方法。\n","dateCreated":"2019-10-26T17:57:16+08:00","dateModified":"2019-11-05T00:17:31+08:00","datePublished":"2019-10-26T17:57:16+08:00","description":"\n学习ES6的总结。\n","headline":"ES6学习系列：let和const","image":["https://raw.githubusercontent.com/Wangjun9662/blog-pic/master/images/es6.jpeg"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://wangjun9662.com/2019/10/26/es6/"},"publisher":{"@type":"Organization","name":"Jason","sameAs":["https://github.com/Wangjun9662/Wangjun9662.github.io/tree/master","mailto:742249657@qq.com"],"image":"avatar.jpeg","logo":{"@type":"ImageObject","url":"avatar.jpeg"}},"url":"https://wangjun9662.com/2019/10/26/es6/","keywords":"ES6, Javascript, let, const","thumbnailUrl":"https://raw.githubusercontent.com/Wangjun9662/blog-pic/master/images/es6.jpeg"}</script>
     <meta name="description" content="学习ES6的总结。">
 <meta name="keywords" content="ES6,Javascript,let,const">
 <meta property="og:type" content="blog">
@@ -24,7 +24,7 @@
 <meta property="og:site_name" content="Jason&#39;s blog">
 <meta property="og:description" content="学习ES6的总结。">
 <meta property="og:locale" content="zh-cn">
-<meta property="og:updated_time" content="2019-10-28T16:11:07.831Z">
+<meta property="og:updated_time" content="2019-11-04T16:17:31.450Z">
 <meta name="twitter:card" content="summary">
     
     
@@ -34,8 +34,8 @@
         <meta property="og:image" content="https://wangjun9662.com/assets/images/avatar.jpeg"/>
     
     
-        <meta property="og:image" content="https://raw.githubusercontent.com/Wangjun9662/blog-pic/master/images/hexo.png"/>
-        <meta class="swiftype" name="image" data-type="enum" content="https://raw.githubusercontent.com/Wangjun9662/blog-pic/master/images/hexo.png"/>
+        <meta property="og:image" content="https://raw.githubusercontent.com/Wangjun9662/blog-pic/master/images/es6.jpeg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://raw.githubusercontent.com/Wangjun9662/blog-pic/master/images/es6.jpeg"/>
     
     
     
@@ -242,8 +242,44 @@
     <div class="post-content markdown">
         <div class="main-content-wrap">
             <!-- excerpt -->
-更新中......
 </p>
+
+<h4 id="块级作用域"><a href="#块级作用域" class="headerlink" title="块级作用域"></a>块级作用域</h4><p>我们都知道，在ES5中只有全局作用域和函数作用域，不存在块级作用域。这样就会导致一些不合理的场景，最经典的一个就是for循环中的计数变量泄露为全局变量，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">let arr = [];</span><br><span class="line">for(var i = 0; i &lt; 10; i++) &#123;</span><br><span class="line">    arr.push(() =&gt; &#123;</span><br><span class="line">        console.log(i);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line">arr[0](); // 10</span><br><span class="line">arr[1](); // 10</span><br><span class="line">......</span><br><span class="line">arr[9](); // 10</span><br></pre></td></tr></table></figure>
+<p>因为没有块级作用域，所以函数执行时，在该作用域下访问到的都是同一个i，而此时for循环已经执行完，i的值是10，所以最后输出的都是10。</p>
+<p>另外一个常见问题就是，内层变量会覆盖掉外层的变量，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">var bar = &apos;hello&apos;;</span><br><span class="line">function foo() &#123;</span><br><span class="line">    console.log(bar);</span><br><span class="line">    var bar = &apos;world&apos;;</span><br><span class="line">&#125;</span><br><span class="line">foo(); // undefined</span><br></pre></td></tr></table></figure>
+<p>由于变量声明提升，函数执行后并没有输出外层的bar，而是输出的undefined。</p>
+<h4 id="let命令"><a href="#let命令" class="headerlink" title="let命令"></a>let命令</h4><p>let命令的用法类似于var，用来声明变量。不同之处主要有以下几点：</p>
+<p>1）<strong>只在当前作用域有效</strong></p>
+<p>也就是说，在作用域外是访问不到作用域内的变量的，这就相当于给Javascript增加了块级作用域，在外部访问块级作用域内声明的变量是会报错的。
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">    let bar = &apos;hello&apos;;</span><br><span class="line">&#125;</span><br><span class="line">console.log(bar); // ReferenceError: bar is not defined</span><br></pre></td></tr></table></figure>
+<div class="alert success"><p>ES6中块级作用域必须使用{}包起来。</p>
+</div>
+
+<p>对于上述的第一个不合理的场景（for循环中的计数变量泄露为全局变量），如果将var改为let来声明i，就会得到我们想要的结果。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">let arr = [];</span><br><span class="line">for(let i = 0; i &lt; 10; i++) &#123;</span><br><span class="line">    arr.push(() =&gt; &#123;</span><br><span class="line">        console.log(i);</span><br><span class="line">    &#125;);</span><br><span class="line">&#125;</span><br><span class="line">arr[0](); // 0</span><br><span class="line">arr[1](); // 1</span><br><span class="line">......</span><br><span class="line">arr[9](); // 9</span><br></pre></td></tr></table></figure>
+<p>每一轮循环都是一个独立的作用域，都会新声明一个i，因此i只在当前的作用域中生效。</p>
+<div class="alert success"><p>注意：for循环中，声明变量和循环体是两个不同的作用域，并且是父子作用域。</p>
+</div>
+</p>
+
+<p>2）<strong>没有变量声明提升</strong></p>
+<p>
+在ES5中是存在变量声明提升的，这也是导致上述第二种不合理场景的原因。但使用let声明的变量是不存在变量声明提升的，必须先声明，再使用。在使用了let或者const的区块中，变量在声明之前使用会报错，这被称为“暂时性死区”。因此，ES5中绝对安全的操作typeof也不再安全。
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ES6:</span><br><span class="line">typeof bar; // ReferenceError</span><br><span class="line">let bar = &apos;hello&apos;;</span><br><span class="line"></span><br><span class="line">ES5:</span><br><span class="line">typeof bar; // undefined</span><br><span class="line">var bar = &apos;hello&apos;;</span><br></pre></td></tr></table></figure>
+<p>暂时性死区和let、const命令不存在变量声明提升，主要是为了减少运行时错误，防止变量在声明前就使用，以免产生意想不到的错误。</p></p>
+<p>3）<strong>不能重复声明</strong></p>
+<p>同一个作用域下，不能重复声明同一个变量，否则会报错。</p>
+<h4 id="const命令"><a href="#const命令" class="headerlink" title="const命令"></a>const命令</h4><p>const是用来声明常量的，和let命令一样，const命令也只在当前作用域有效、不存在变量声明提升、存在暂时性死区、不能重复声明。另外一个不同的点就是，使用const声明的常量，不能再被改变。这样一来，const声明常量的时候，必须得赋值，不能留在以后再赋值。</p>
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">const bar; // SyntaxError: Missing initializer in const declaration</span><br><span class="line">const bar = &apos;hello&apos;;</span><br><span class="line">const bar = &apos;world&apos;; // TypeError: Assignment to constant variable.</span><br></pre></td></tr></table></figure>
+<span class="highlight-text danger">本质：</span>const不能被改变的实际上是常量所指向的那个内存地址的值。如果使用const声明基本类型数据，const相当于保存的是数据本身，该常量是不能被改变的；如果const声明的是一个引用类型数据，常量保存的是引用地址，只是该地址不能被改变，该地址所指向的数据是可以被改变的。
+
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">const arr = [];</span><br><span class="line">arr.push(0); // 不会报错</span><br><span class="line">arr = []; //TypeError: Assignment to constant variable.</span><br></pre></td></tr></table></figure>
+<div class="alert success"><p>如果真的想冻结对象，可以使用Object.freeze()方法。</p>
+</div>
             
 
 
