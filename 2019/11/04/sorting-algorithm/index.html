@@ -1,0 +1,607 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Jason&#39;s blog">
+    <title>常见的几种排序算法 - Jason&#39;s blog</title>
+    <meta name="author" content="Jason">
+    
+        <meta name="keywords" content="Jason,Javascript,CSS,HTML,前端,博客,algorithm,排序算法">
+    
+    
+        <link rel="icon" href="https://wangjun9662.com/assets/images/logo.png">
+    
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Jason","sameAs":["https://github.com/Wangjun9662/Wangjun9662.github.io/tree/master","mailto:742249657@qq.com"],"image":"avatar.jpeg"},"articleBody":"\n\n\n算法对于程序猿的重要性不言而喻。每个人学习算法的动机不一样，有人确实是因为兴趣，有人是为了提升编码能力，也有人只是为了面试。但无论什么原因，对于一个合格的程序猿而言，算法这个坎是绕不过的，而且必须得跨过。虽然用的不多，但学进脑子的东西就像吃进肚子里的饭，会变成自己的血肉，支撑自己的成长。\n\n这篇文章，主要介绍一些常见的排序算法。\n\n\n1、冒泡排序冒泡排序应该是最耳熟能详的排序算法了，即使不是计算机相关专业的人应该也都听过。它也是最简单的一个，但是性能是最差的。它的原理是比较任何两个相邻的项，如果第一个比第二个大，则交换两者的位置，直至每项到达正确的位置，就好比气泡逐渐向上一样，这也是它名字的由来。\n实现冒泡排序只需要两层循环就行：\n1234567891011121314151617181920function bubbleSort(array) &#123;    const len = array.length;    for (let i = 0; i &lt; len; i++) &#123;        for (let j = 0; j &lt; len - 1 -i; j++) &#123;            if (array[j] &gt; array[j + 1]) &#123;                swap(array, j, j+1);            &#125;        &#125;    &#125;    return array;&#125;// swap用来交换数组中两项的位置，后续算法中swap都是这个。function swap(array, index1, index2)&#123;    const temp = array[index2];    array[index2] = array[index1];    array[index1] = temp;&#125;bubbleSort([3, 5, 1, 9, 2, 10]); // [ 1, 2, 3, 5, 9, 10 ]\n从代码中我们可以看到，冒泡排序算法的时间复杂度是O(n^2)，所以它的性能很差。\n为啥说时间复杂度为O(n^2)就很差呢？这里我们也说一说衡量算法运行速度快慢的大O表示法。\n大O表示法的单位不是秒，所以它不是用时间来衡量算法快慢的，它计算的是操作数的增速。怎么理解呢？也就是随着输入的增加，算法运行时间的增速。\n大O表示法计算的是最糟糕的情况\n\n下面是几个常用的大O时间复杂度：\n\nO(n)\nO(n^2)\nO(logn)\nO(nlogn)\n\n我们在纸上画一画这几个函数的曲线就可以看到，冒泡排序的O(n^2)真的很差！！！并且输入越多，它表现得越差。\n2、选择排序选择排序和冒泡排序一样，时间复杂度都为O(n^2)，所以它也是一种性能很差的排序方法。它的原理是首先找出最小的数，放到第一位，然后找出第二小的数，放到第二位……以此类推，找到最大数时排序完毕。\n它的实现也是使用两层循环：\n12345678910111213141516171819function selectSort(array) &#123;    const len = array.length;    let minIndex;    // 找到第二大数的时候，最大数的位置就已经确定了，所以i &lt; len - 1，可以减少一次不必要的循环。    for (let i = 0; i &lt; len - 1; i++) &#123;        minIndex = i;        for (let j = i + 1; j &lt; len; j++) &#123;            if (array[j] &lt; array[minIndex]) &#123;                minIndex = j;            &#125;        &#125;        if (i !== minIndex) &#123;            swap(array, i, minIndex);        &#125;    &#125;    return array;&#125;selectSort([3, 5, 1, 9, 2, 10]); // [ 1, 2, 3, 5, 9, 10 ]\n\n3、插入排序插入排序的时间复杂度也是O(n^2)，还是属于性能很差的那种。它的原理是假设第1项已经排好序，比较第2项和第1项的大小，决定第2项应该插在第1项的前面还是后面。这样，前两项的顺序就已经排好了，然后再拿第3项和前两项比较，看排在哪个位置……以此类推，最后完成排序。\n实现如下：\n12345678910111213141516function insertSort(array) &#123;    const len = array.length;    let j, temp;    for (let i = 1; i &lt; len; i++) &#123;        j = i;        // 缓存当前需要插入的项        temp = array[j];        while (j &gt; 0 &amp;&amp; temp &lt; array[j - 1]) &#123;            // 前面的项比当前项大，就把它往后挪一项            array[j] = array[j - 1];            j--;        &#125;        array[j] = temp;    &#125;    return array;&#125;\n\n4、归并排序归并排序采用的是“分治”思想，所谓分治，就是先分后治。先把数组分为一个个有序的子数组，然后再将这些有序的子数组合并为一个有序的数组。那么如何能把数组分为一个个有序的子数组呢？如果数组只有一项的话，那数组肯定是有序的。归并排序采用的就是这种方法，先将数组分解为一个个长度为1的子数组，然后再将他们合并。至于怎么将有序的多个数组合并为一个有序的数组，我们在代码中说明。\n123456789101112131415161718192021222324252627282930313233function mergeSort(array) &#123;    const len = array.length;    if (len === 1) &#123;        return array;    &#125;    const mid = Math.floor(len / 2);    const left = array.slice(0, mid);    const right = array.slice(mid, len);    // 递归的将数组拆分为长度为1的子数组    return merge(mergeSort(left), mergeSort(right));&#125;// 将两个有序的数组合并为一个有序的数组function merge(left, right) &#123;    let il = 0, ir = 0, res = [];    const lenLeft = left.length, lenRight = right.length;    // 数组A和B，首先拿A[0]和B[0]比较，如果A[0]&lt;B[0]，A[0]放入res中，再拿A[1]和B[0]比较，小的放入res，以此类推    while (il &lt; lenLeft &amp;&amp; ir &lt; lenRight) &#123;        if (left[il] &gt; right[ir]) &#123;            res.push(right[ir++]);        &#125; else &#123;            res.push(left[il++]);        &#125;    &#125;    // 当其中一个数组比较完后，将另一个没比完的数组中的剩余项全部放入res    while (il &lt; lenLeft) &#123;        res.push(left[il++]);    &#125;    while (ir &lt; lenRight) &#123;        res.push(right[ir++]);    &#125;    return res;&#125;\n归并排序的时间复杂度为O(n*logn)，是一个性能不错的排序算法，实际应用中是可以使用的。\n5、快速排序我相信对大家来说，快速排序的大名一定是如雷贯耳，它也是最常用的排序算法了。时间复杂度和归并排序一样，也是O(nlogn)，但是它通常比其他的复杂度为O(nlogn)的算法效率要高。他同样也使用的是分治思想，把数组分为较小的数组来处理，但不是像归并那样把数组分为一个个长度为1的数组。我们直接来看代码：\n123456789101112131415161718192021222324252627282930313233343536373839404142434445464748/** * @param &#123;Array&#125; array 被排序的数组 * @param &#123;Number&#125; start 起始位置 * @param &#123;Number&#125; end 结束位置 */function quickSort(array, start, end) &#123;    let index;    if (array.length &gt; 1) &#123;        // index将数组分为较小值数组和较大值数组        index = partition(array, start, end);        // 递归处理较小值数组和较大值数组        if (start &lt; index - 1) &#123;            quickSort(array, start, index - 1);        &#125;        if (index &lt; end) &#123;            quickSort(array, index, end);        &#125;    &#125;    return array;&#125;function partition(array, left, right) &#123;    const mid = Math.floor((left + right) / 2);    // 找到哨兵    const pivot = array[mid];    // 定义两个指针，一个指向头，一个指向尾部    let i = left, j = right;    while (i &lt;= j) &#123;        // 哨兵左边，找到第一个比哨兵大的        while (array[i] &lt; pivot) &#123;            i++;        &#125;        // 哨兵右边，找到第一个比哨兵小的        while (array[j] &gt; pivot) &#123;            j--        &#125;        if (i &lt;= j) &#123;            // 交换两者位置            swap(array, i, j);            i++;            j--;        &#125;    &#125;    return i;&#125;quickSort([3, 5, 1, 9, 2, 10], 0, 3); // [1, 3, 5, 9, 2, 10]quickSort([3, 5, 1, 9, 2, 10], 0, 5); // [1, 2, 3, 5, 9, 10]\n\nOK，以上就是我目前总结的5种常见的排序算法，后面学习了其他的排序算法后也会在这里更新。同时，后面也会学习总结一些其它经典的、常用的算法。","dateCreated":"2019-11-04T00:50:15+08:00","dateModified":"2019-11-07T23:26:50+08:00","datePublished":"2019-11-04T00:50:15+08:00","description":"\n排序算法\n","headline":"常见的几种排序算法","image":["https://raw.githubusercontent.com/Wangjun9662/blog-pic/master/images/algorithm.png"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://wangjun9662.com/2019/11/04/sorting-algorithm/"},"publisher":{"@type":"Organization","name":"Jason","sameAs":["https://github.com/Wangjun9662/Wangjun9662.github.io/tree/master","mailto:742249657@qq.com"],"image":"avatar.jpeg","logo":{"@type":"ImageObject","url":"avatar.jpeg"}},"url":"https://wangjun9662.com/2019/11/04/sorting-algorithm/","keywords":"algorithm, 排序算法","thumbnailUrl":"https://raw.githubusercontent.com/Wangjun9662/blog-pic/master/images/algorithm.png"}</script>
+    <meta name="description" content="排序算法">
+<meta name="keywords" content="algorithm,排序算法">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="常见的几种排序算法">
+<meta property="og:url" content="https:&#x2F;&#x2F;wangjun9662.com&#x2F;2019&#x2F;11&#x2F;04&#x2F;sorting-algorithm&#x2F;index.html">
+<meta property="og:site_name" content="Jason&#39;s blog">
+<meta property="og:description" content="排序算法">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:updated_time" content="2019-11-07T15:26:50.282Z">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://wangjun9662.com/assets/images/avatar.jpeg"/>
+    
+    
+        <meta property="og:image" content="https://raw.githubusercontent.com/Wangjun9662/blog-pic/master/images/algorithm.png"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://raw.githubusercontent.com/Wangjun9662/blog-pic/master/images/algorithm.png"/>
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-jfwnhh8zo5sfd2rfklm7vxi5nwn2mj8th8gu4kwajjdnedcjvfesafcjzz03.min.css">
+    <!--STYLES END-->
+    
+
+    
+
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Jason&#39;s blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="打开链接: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/avatar.jpeg" alt="作者的图片"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="阅读有关作者的更多信息"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/avatar.jpeg" alt="作者的图片"/>
+                </a>
+                <h4 class="sidebar-profile-name">Jason</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>我相信，我终将富有！</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/"
+                            title="首页"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="分类"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="标签"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="归档"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                            title="关于"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/Wangjun9662/Wangjun9662.github.io/tree/master" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="mailto:742249657@qq.com" target="_blank" rel="noopener" title="邮箱">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">邮箱</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            常见的几种排序算法
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-11-04T00:50:15+08:00">
+	
+		    11月 04, 2019
+    	
+    </time>
+    
+        <span>发布在 </span>
+        
+    <a class="category-link" href="/categories/%E7%AE%97%E6%B3%95%E7%9B%B8%E5%85%B3/">算法相关</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <!-- excerpt -->
+</p>
+<p>
+算法对于程序猿的重要性不言而喻。每个人学习算法的动机不一样，有人确实是因为兴趣，有人是为了提升编码能力，也有人只是为了面试。但无论什么原因，对于一个合格的程序猿而言，算法这个坎是绕不过的，而且必须得跨过。虽然用的不多，但学进脑子的东西就像吃进肚子里的饭，会变成自己的血肉，支撑自己的成长。
+
+<p>这篇文章，主要介绍一些常见的排序算法。</p>
+</p>
+
+<h4 id="1、冒泡排序"><a href="#1、冒泡排序" class="headerlink" title="1、冒泡排序"></a>1、冒泡排序</h4><p>冒泡排序应该是最耳熟能详的排序算法了，即使不是计算机相关专业的人应该也都听过。它也是最简单的一个，但是性能是最差的。它的原理是比较任何两个相邻的项，如果第一个比第二个大，则交换两者的位置，直至每项到达正确的位置，就好比气泡逐渐向上一样，这也是它名字的由来。</p>
+<p>实现冒泡排序只需要两层循环就行：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">function bubbleSort(array) &#123;</span><br><span class="line">    const len = array.length;</span><br><span class="line">    for (let i = 0; i &lt; len; i++) &#123;</span><br><span class="line">        for (let j = 0; j &lt; len - 1 -i; j++) &#123;</span><br><span class="line">            if (array[j] &gt; array[j + 1]) &#123;</span><br><span class="line">                swap(array, j, j+1);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return array;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// swap用来交换数组中两项的位置，后续算法中swap都是这个。</span><br><span class="line">function swap(array, index1, index2)&#123;</span><br><span class="line">    const temp = array[index2];</span><br><span class="line">    array[index2] = array[index1];</span><br><span class="line">    array[index1] = temp;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">bubbleSort([3, 5, 1, 9, 2, 10]); // [ 1, 2, 3, 5, 9, 10 ]</span><br></pre></td></tr></table></figure>
+<p>从代码中我们可以看到，冒泡排序算法的时间复杂度是O(n^2)，所以它的性能很差。</p>
+<p>为啥说时间复杂度为O(n^2)就很差呢？这里我们也说一说衡量算法运行速度快慢的大O表示法。</p>
+<p>大O表示法的单位不是秒，所以它不是用时间来衡量算法快慢的，它计算的是操作数的增速。怎么理解呢？也就是随着输入的增加，算法运行时间的增速。</p>
+<div class="alert info"><p>大O表示法计算的是最糟糕的情况</p>
+</div>
+<p>下面是几个常用的大O时间复杂度：</p>
+<ul>
+<li>O(n)</li>
+<li>O(n^2)</li>
+<li>O(logn)</li>
+<li>O(nlogn)</li>
+</ul>
+<p>我们在纸上画一画这几个函数的曲线就可以看到，冒泡排序的O(n^2)真的很差！！！并且输入越多，它表现得越差。</p>
+<h4 id="2、选择排序"><a href="#2、选择排序" class="headerlink" title="2、选择排序"></a>2、选择排序</h4><p>选择排序和冒泡排序一样，时间复杂度都为O(n^2)，所以它也是一种性能很差的排序方法。它的原理是首先找出最小的数，放到第一位，然后找出第二小的数，放到第二位……以此类推，找到最大数时排序完毕。</p>
+<p>它的实现也是使用两层循环：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">function selectSort(array) &#123;</span><br><span class="line">    const len = array.length;</span><br><span class="line">    let minIndex;</span><br><span class="line">    // 找到第二大数的时候，最大数的位置就已经确定了，所以i &lt; len - 1，可以减少一次不必要的循环。</span><br><span class="line">    for (let i = 0; i &lt; len - 1; i++) &#123;</span><br><span class="line">        minIndex = i;</span><br><span class="line">        for (let j = i + 1; j &lt; len; j++) &#123;</span><br><span class="line">            if (array[j] &lt; array[minIndex]) &#123;</span><br><span class="line">                minIndex = j;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        if (i !== minIndex) &#123;</span><br><span class="line">            swap(array, i, minIndex);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return array;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">selectSort([3, 5, 1, 9, 2, 10]); // [ 1, 2, 3, 5, 9, 10 ]</span><br></pre></td></tr></table></figure>
+
+<h4 id="3、插入排序"><a href="#3、插入排序" class="headerlink" title="3、插入排序"></a>3、插入排序</h4><p>插入排序的时间复杂度也是O(n^2)，还是属于性能很差的那种。它的原理是假设第1项已经排好序，比较第2项和第1项的大小，决定第2项应该插在第1项的前面还是后面。这样，前两项的顺序就已经排好了，然后再拿第3项和前两项比较，看排在哪个位置……以此类推，最后完成排序。</p>
+<p>实现如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">function insertSort(array) &#123;</span><br><span class="line">    const len = array.length;</span><br><span class="line">    let j, temp;</span><br><span class="line">    for (let i = 1; i &lt; len; i++) &#123;</span><br><span class="line">        j = i;</span><br><span class="line">        // 缓存当前需要插入的项</span><br><span class="line">        temp = array[j];</span><br><span class="line">        while (j &gt; 0 &amp;&amp; temp &lt; array[j - 1]) &#123;</span><br><span class="line">            // 前面的项比当前项大，就把它往后挪一项</span><br><span class="line">            array[j] = array[j - 1];</span><br><span class="line">            j--;</span><br><span class="line">        &#125;</span><br><span class="line">        array[j] = temp;</span><br><span class="line">    &#125;</span><br><span class="line">    return array;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<h4 id="4、归并排序"><a href="#4、归并排序" class="headerlink" title="4、归并排序"></a>4、归并排序</h4><p>归并排序采用的是“分治”思想，所谓分治，就是先分后治。先把数组分为一个个有序的子数组，然后再将这些有序的子数组合并为一个有序的数组。那么如何能把数组分为一个个有序的子数组呢？如果数组只有一项的话，那数组肯定是有序的。归并排序采用的就是这种方法，先将数组分解为一个个长度为1的子数组，然后再将他们合并。至于怎么将有序的多个数组合并为一个有序的数组，我们在代码中说明。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">function mergeSort(array) &#123;</span><br><span class="line">    const len = array.length;</span><br><span class="line">    if (len === 1) &#123;</span><br><span class="line">        return array;</span><br><span class="line">    &#125;</span><br><span class="line">    const mid = Math.floor(len / 2);</span><br><span class="line">    const left = array.slice(0, mid);</span><br><span class="line">    const right = array.slice(mid, len);</span><br><span class="line">    // 递归的将数组拆分为长度为1的子数组</span><br><span class="line">    return merge(mergeSort(left), mergeSort(right));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">// 将两个有序的数组合并为一个有序的数组</span><br><span class="line">function merge(left, right) &#123;</span><br><span class="line">    let il = 0, ir = 0, res = [];</span><br><span class="line">    const lenLeft = left.length, lenRight = right.length;</span><br><span class="line">    // 数组A和B，首先拿A[0]和B[0]比较，如果A[0]&lt;B[0]，A[0]放入res中，再拿A[1]和B[0]比较，小的放入res，以此类推</span><br><span class="line">    while (il &lt; lenLeft &amp;&amp; ir &lt; lenRight) &#123;</span><br><span class="line">        if (left[il] &gt; right[ir]) &#123;</span><br><span class="line">            res.push(right[ir++]);</span><br><span class="line">        &#125; else &#123;</span><br><span class="line">            res.push(left[il++]);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    // 当其中一个数组比较完后，将另一个没比完的数组中的剩余项全部放入res</span><br><span class="line">    while (il &lt; lenLeft) &#123;</span><br><span class="line">        res.push(left[il++]);</span><br><span class="line">    &#125;</span><br><span class="line">    while (ir &lt; lenRight) &#123;</span><br><span class="line">        res.push(right[ir++]);</span><br><span class="line">    &#125;</span><br><span class="line">    return res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>归并排序的时间复杂度为O(n*logn)，是一个性能不错的排序算法，实际应用中是可以使用的。</p>
+<h4 id="5、快速排序"><a href="#5、快速排序" class="headerlink" title="5、快速排序"></a>5、快速排序</h4><p>我相信对大家来说，快速排序的大名一定是如雷贯耳，它也是最常用的排序算法了。时间复杂度和归并排序一样，也是O(nlogn)，但是它通常比其他的复杂度为O(nlogn)的算法效率要高。他同样也使用的是分治思想，把数组分为较小的数组来处理，但不是像归并那样把数组分为一个个长度为1的数组。<br>我们直接来看代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">/**</span><br><span class="line"> * @param &#123;Array&#125; array 被排序的数组</span><br><span class="line"> * @param &#123;Number&#125; start 起始位置</span><br><span class="line"> * @param &#123;Number&#125; end 结束位置</span><br><span class="line"> */</span><br><span class="line">function quickSort(array, start, end) &#123;</span><br><span class="line">    let index;</span><br><span class="line">    if (array.length &gt; 1) &#123;</span><br><span class="line">        // index将数组分为较小值数组和较大值数组</span><br><span class="line">        index = partition(array, start, end);</span><br><span class="line">        // 递归处理较小值数组和较大值数组</span><br><span class="line">        if (start &lt; index - 1) &#123;</span><br><span class="line">            quickSort(array, start, index - 1);</span><br><span class="line">        &#125;</span><br><span class="line">        if (index &lt; end) &#123;</span><br><span class="line">            quickSort(array, index, end);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return array;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">function partition(array, left, right) &#123;</span><br><span class="line">    const mid = Math.floor((left + right) / 2);</span><br><span class="line">    // 找到哨兵</span><br><span class="line">    const pivot = array[mid];</span><br><span class="line">    // 定义两个指针，一个指向头，一个指向尾部</span><br><span class="line">    let i = left, j = right;</span><br><span class="line">    while (i &lt;= j) &#123;</span><br><span class="line">        // 哨兵左边，找到第一个比哨兵大的</span><br><span class="line">        while (array[i] &lt; pivot) &#123;</span><br><span class="line">            i++;</span><br><span class="line">        &#125;</span><br><span class="line">        // 哨兵右边，找到第一个比哨兵小的</span><br><span class="line">        while (array[j] &gt; pivot) &#123;</span><br><span class="line">            j--</span><br><span class="line">        &#125;</span><br><span class="line">        if (i &lt;= j) &#123;</span><br><span class="line">            // 交换两者位置</span><br><span class="line">            swap(array, i, j);</span><br><span class="line">            i++;</span><br><span class="line">            j--;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    return i;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">quickSort([3, 5, 1, 9, 2, 10], 0, 3); // [1, 3, 5, 9, 2, 10]</span><br><span class="line">quickSort([3, 5, 1, 9, 2, 10], 0, 5); // [1, 2, 3, 5, 9, 10]</span><br></pre></td></tr></table></figure>
+
+<p>OK，以上就是我目前总结的5种常见的排序算法，后面学习了其他的排序算法后也会在这里更新。同时，后面也会学习总结一些其它经典的、常用的算法。</p>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/algorithm/" rel="tag">algorithm</a> <a class="tag tag--primary tag--small t-link" href="/tags/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/" rel="tag">排序算法</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/10/26/es6/"
+                    data-tooltip="ES6学习系列：let和const"
+                    aria-label="下一篇: ES6学习系列：let和const"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Diesen Beitrag teilen"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://wangjun9662.com/2019/11/04/sorting-algorithm/"
+                    title="分享到 Facebook"
+                    aria-label="分享到 Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://wangjun9662.com/2019/11/04/sorting-algorithm/"
+                    title="分享到 Twitter"
+                    aria-label="分享到 Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://wangjun9662.com/2019/11/04/sorting-algorithm/"
+                    title="分享到 Google+"
+                    aria-label="分享到 Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="copyrights">
+        Copyrights &copy; 2019 Jason. All Rights Reserved.
+    </span>
+    <br>
+    <span id="busuanzi_container_site_uv">
+            欢迎你，Jason 的第 <span id="busuanzi_value_site_uv"></span> 位朋友！
+    </span>
+    <span id="busuanzi_container_site_pv">
+        网站总访问量 <span id="busuanzi_value_site_pv"></span> 人次
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    <a
+                        class="post-action-btn btn btn--disabled"
+                        aria-hidden="true"
+                    >
+                        
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/10/26/es6/"
+                    data-tooltip="ES6学习系列：let和const"
+                    aria-label="下一篇: ES6学习系列：let和const"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Diesen Beitrag teilen"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://wangjun9662.com/2019/11/04/sorting-algorithm/"
+                    title="分享到 Facebook"
+                    aria-label="分享到 Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://wangjun9662.com/2019/11/04/sorting-algorithm/"
+                    title="分享到 Twitter"
+                    aria-label="分享到 Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://wangjun9662.com/2019/11/04/sorting-algorithm/"
+                    title="分享到 Google+"
+                    aria-label="分享到 Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://wangjun9662.com/2019/11/04/sorting-algorithm/"
+                        aria-label="分享到 Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://wangjun9662.com/2019/11/04/sorting-algorithm/"
+                        aria-label="分享到 Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://wangjun9662.com/2019/11/04/sorting-algorithm/"
+                        aria-label="分享到 Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/avatar.jpeg" alt="作者的图片"/>
+        
+            <h4 id="about-card-name">Jason</h4>
+        
+            <div id="about-card-bio"><p>我相信，我终将富有！</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>前端工程师</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                北京-海淀
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/bg3.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-v2pflyivt9jjoigks6lwegsczwfxqdlnrixsox9vixg7cleyju84davvjqsl.min.js"></script>
+<!--SCRIPTS END-->
+
+
+
+
+
+    </body>
+</html>
