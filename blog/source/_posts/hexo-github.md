@@ -149,6 +149,8 @@ hexo g -d
 g是generate的简写，就是部署前需要先生成。d是deploy的简写。这样，在浏览器中访问xxx.github.io（xxx是你GitHub的用户名）就可以看到自己的博客了。
 {% alert info %}
 其他的常用命令：
+hexo new draft xxx：生成草稿
+hexo publish xxx：发布草稿
 hexo clean：清除缓存
 hexo server -p xxx：自定义端口
 hexo server -i xxx：自定义ip
