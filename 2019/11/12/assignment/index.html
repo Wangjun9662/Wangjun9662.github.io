@@ -1,0 +1,628 @@
+
+<!DOCTYPE html>
+<html lang="zh-cn">
+    
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="generator" content="Jason&#39;s blog">
+    <title>ES6学习系列：变量的解构赋值 - Jason&#39;s blog</title>
+    <meta name="author" content="Jason">
+    
+        <meta name="keywords" content="Jason,Javascript,CSS,HTML,前端,博客,ES6,Javascript,解构赋值">
+    
+    
+        <link rel="icon" href="https://wangjun9662.com/assets/images/logo.png">
+    
+    
+    <script type="application/ld+json">{"@context":"http://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"Jason","sameAs":["https://github.com/Wangjun9662/Wangjun9662.github.io/tree/master","mailto:742249657@qq.com"],"image":"avatar.jpeg"},"articleBody":"\n\n\n在ES5中，我们只能直接给变量赋值。但到了ES6，可以通过某种模式匹配来从数组或对象中提取出来指定值，这就叫做变量的解构赋值。\n1、数组的解构赋值数组可以按照位置进行解构赋值，如下：\n12345let [a, b] = [1, 3];// a = 1, b = 3let [a, ...b] = [1, 2, 3, 4];// a = 1, b = [2, 3, 4]\n如果对应的位置没有对应的值，则变量的值被赋为undefined。\n12let [a, b, c] = [1, 2];// a = 1, b = 2, c = undefined\n还可以只解构数组的一部分，这种叫做不完全解构。如下：\n12let [e, f] = [3, 4, 5, 6];// e = 3, f = 4\n因为数组是一种特殊的对象，所以数组也可以进行对象解构（对象解构赋值在下节介绍）。\n123let &#123;0: first, 1: second&#125; = [1, 3, 5, 7];first // 1second // 3\n默认值解构赋值还可以给变量指定默认值，只有当数组中对应位置的值完全等于（===）undefined时，默认值才会生效。\n12let [a = 100, b = 200] = [0, null];// a = 0, b = 200\n因为null不是完全等于undefined，所以上述b设置的默认值200并没有生效。下面两种情况，b设置的默认值都会生效。\n123let [a = 100, b = 200] = [0, undefined];let [a = 100, b= 200] = [0];// a = 0, b = 200\n如果默认值是一个表达式，则该表达式是惰性求值的，即只有在默认值生效时才会去执行表达式求值。\n\n\n2、对象的解构赋值不同于数组按照位置来解构赋值，对象的解构赋值和位置无关，只有当变量和对象属性匹配时，才能取到正确的值。\n123let &#123;foo, bar&#125; = &#123;foo: &apos;Jason&apos;, bar: &apos;Jack&apos;&#125;;foo // &apos;Jason&apos;bar // &apos;Jack&apos;\n和数组一样，如果没有对应的值，则变量被赋值为undefined。\n如果不想被赋值的变量名和对象的属性名一样，可以这样来写：\n123let &#123;foo: baz, bar: boo&#125; = &#123;foo: &apos;Jason&apos;, bar: &apos;Jack&apos;&#125;;baz // &apos;Jason&apos;boo // &apos;Jack&apos;\n也就是说，前者是匹配的模式，真正被赋值的变量是后者。因此，最开始的那种形式是下面这种形式的简写：\n1let &#123;foo: foo, bar: bar&#125; = &#123;foo: &apos;Jason&apos;, bar: &apos;Jack&apos;&#125;;\n\n默认值和数组一样，对象的解构赋值也可以指定默认值。默认值生效的方式同样是对应属性值完全等于（===）undefined。\n123let &#123;foo = &apos;Jade&apos;, bar = &apos;John&apos;&#125; = &#123;foo: undefined, bar: &apos;Jack&apos;&#125;;foo // &apos;Jade&apos;bar // &apos;Jack&apos;\n对象的解构赋值是可以取到继承来的属性值的。\n\n123456const foo = &#123;    name: &apos;Jason&apos;&#125;;const baz = Object.create(foo);let &#123;name&#125; = baz;name // &apos;Jason&apos;\nbaz自身是没有name属性的，但是它的原型foo上有该属性，因此解构赋值可以取到。\n3、字符串的解构赋值字符串在解构赋值时，是被当做类似数组的对象来处理的。\n123let [first, second] = &apos;Jason&apos;;first // Jsecond // a\n类数组对象都会有一个length属性，所以还可以解构到这个属性值。\n12let &#123;length: len&#125; = &apos;hello&apos;;len // 5\n\n4、数值和布尔值的解构赋值解构赋值时，如果等号右边不是对象，则先会被转为对象。\n\n因此，数值和布尔值会被先转化为对象，然后进行解构赋值。\n12345let &#123;toString: s&#125; = 1111;s === Number.prototype.toString; // truelet &#123;toString: s2&#125; = true;s2 === Boolean.prototype.toString; // true\n\n5、函数参数的解构赋值函数参数也是可以使用解构赋值的。\n123function foo(&#123;name, age&#125;) &#123;    console.log(name, age);&#125;\n上述函数的参数是一个对象，当参数传进来时就通过对象解构赋值拿到了name和age属性值，函数内部就可以直接使用了。函数参数的解构赋值也可以指定默认值。\n123function foo(&#123;name = &apos;jason&apos;, age = 18&#125;) &#123;    console.log(name, age);&#125;\n同样，只有当右边属性值完全等于（===）undefined时，参数默认值才会生效。\n6、总结1、对于数组的解构赋值，只要等号右边的数据部署了Iterator接口（如string，Set，Map等），就可以使用数组解构赋值。\n123456789101112function* gen() &#123;    let pre = 0, cur = 1;    while(true) &#123;        yield pre;        [pre, cur] = [cur, pre + cur];    &#125;&#125;let [a, b, c, d] = gen();a // 0b // 1c // 1d // 2\n上面的gen是一个Iterator迭代器生成函数，所以它生成的迭代器可以进行数组解构赋值。而如果等号右边数据不具备Iterator接口，则数组解构赋值会报错。\n12345let [first] = 111;let [second] = true;let [third] = NaN;let [forth] = &#123;&#125;;// TypeError: 111 is not iterable\n根据解构赋值的规则，前三个会被转为对象，但是没有部署Iterator接口，最后一个本身是个对象，也没有部署Iterator接口。所以都会报错。2、对于对象解构赋值。因为null和undefined是不能转为对象的，所以对它俩进行对象解构赋值会报错。\n123let &#123;toString: s1&#125; = null;let &#123;toString: s2&#125; = undefined;// TypeError: Cannot destructure property `toString` of &apos;undefined&apos; or &apos;null&apos;.","dateCreated":"2019-11-12T19:39:10+08:00","dateModified":"2019-12-04T09:44:22+08:00","datePublished":"2019-11-12T19:39:10+08:00","description":"\n学习ES6的总结。\n","headline":"ES6学习系列：变量的解构赋值","image":["https://raw.githubusercontent.com/Wangjun9662/blog-pic/master/images/es6.jpeg"],"mainEntityOfPage":{"@type":"WebPage","@id":"https://wangjun9662.com/2019/11/12/assignment/"},"publisher":{"@type":"Organization","name":"Jason","sameAs":["https://github.com/Wangjun9662/Wangjun9662.github.io/tree/master","mailto:742249657@qq.com"],"image":"avatar.jpeg","logo":{"@type":"ImageObject","url":"avatar.jpeg"}},"url":"https://wangjun9662.com/2019/11/12/assignment/","keywords":"ES6, Javascript, 解构赋值","thumbnailUrl":"https://raw.githubusercontent.com/Wangjun9662/blog-pic/master/images/es6.jpeg"}</script>
+    <meta name="description" content="学习ES6的总结。">
+<meta name="keywords" content="ES6,Javascript,解构赋值">
+<meta property="og:type" content="blog">
+<meta property="og:title" content="ES6学习系列：变量的解构赋值">
+<meta property="og:url" content="https:&#x2F;&#x2F;wangjun9662.com&#x2F;2019&#x2F;11&#x2F;12&#x2F;assignment&#x2F;index.html">
+<meta property="og:site_name" content="Jason&#39;s blog">
+<meta property="og:description" content="学习ES6的总结。">
+<meta property="og:locale" content="zh-cn">
+<meta property="og:updated_time" content="2019-12-04T01:44:22.073Z">
+<meta name="twitter:card" content="summary">
+    
+    
+        
+    
+    
+        <meta property="og:image" content="https://wangjun9662.com/assets/images/avatar.jpeg"/>
+    
+    
+        <meta property="og:image" content="https://raw.githubusercontent.com/Wangjun9662/blog-pic/master/images/es6.jpeg"/>
+        <meta class="swiftype" name="image" data-type="enum" content="https://raw.githubusercontent.com/Wangjun9662/blog-pic/master/images/es6.jpeg"/>
+    
+    
+    
+    <!--STYLES-->
+    <link rel="stylesheet" href="/assets/css/style-jfwnhh8zo5sfd2rfklm7vxi5nwn2mj8th8gu4kwajjdnedcjvfesafcjzz03.min.css">
+    <!--STYLES END-->
+    
+
+    
+
+    
+</head>
+
+    <body>
+        <div id="blog">
+            <!-- Define author's picture -->
+
+
+    
+        
+            
+        
+    
+
+<header id="header" data-behavior="5">
+    <i id="btn-open-sidebar" class="fa fa-lg fa-bars"></i>
+    <div class="header-title">
+        <a
+            class="header-title-link"
+            href="/"
+            aria-label=""
+        >
+            Jason&#39;s blog
+        </a>
+    </div>
+    
+        
+            <a
+                class="header-right-picture "
+                href="#about"
+                aria-label="打开链接: /#about"
+            >
+        
+        
+            <img class="header-picture" src="/assets/images/avatar.jpeg" alt="作者的图片"/>
+        
+        </a>
+    
+</header>
+
+            <!-- Define author's picture -->
+
+
+
+        
+    
+
+<nav id="sidebar" data-behavior="5">
+    <div class="sidebar-container">
+        
+            <div class="sidebar-profile">
+                <a
+                    href="/#about"
+                    aria-label="阅读有关作者的更多信息"
+                >
+                    <img class="sidebar-profile-picture" src="/assets/images/avatar.jpeg" alt="作者的图片"/>
+                </a>
+                <h4 class="sidebar-profile-name">Jason</h4>
+                
+                    <h5 class="sidebar-profile-bio"><p>我相信，我终将富有！</p>
+</h5>
+                
+            </div>
+        
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/"
+                            title="首页"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-home" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">首页</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-categories"
+                            
+                            title="分类"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-bookmark" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">分类</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-tags"
+                            
+                            title="标签"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-tags" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">标签</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="/all-archives"
+                            
+                            title="归档"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-archive" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">归档</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link "
+                             href="#about"
+                            
+                            title="关于"
+                        >
+                    
+                        <i class="sidebar-button-icon fa fa-question" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">关于</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+            <ul class="sidebar-buttons">
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="https://github.com/Wangjun9662/Wangjun9662.github.io/tree/master" target="_blank" rel="noopener" title="GitHub">
+                    
+                        <i class="sidebar-button-icon fab fa-github" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">GitHub</span>
+                    </a>
+            </li>
+            
+                <li class="sidebar-button">
+                    
+                        <a  class="sidebar-button-link " href="mailto:742249657@qq.com" target="_blank" rel="noopener" title="邮箱">
+                    
+                        <i class="sidebar-button-icon fa fa-envelope" aria-hidden="true"></i>
+                        <span class="sidebar-button-desc">邮箱</span>
+                    </a>
+            </li>
+            
+        </ul>
+        
+    </div>
+</nav>
+
+            
+            <div id="main" data-behavior="5"
+                 class="
+                        hasCoverMetaOut
+                        ">
+                
+<article class="post">
+    
+    
+        <div class="post-header main-content-wrap text-center">
+    
+        <h1 class="post-title">
+            ES6学习系列：变量的解构赋值
+        </h1>
+    
+    
+        <div class="post-meta">
+    <time datetime="2019-11-12T19:39:10+08:00">
+	
+		    11月 12, 2019
+    	
+    </time>
+    
+        <span>发布在 </span>
+        
+    <a class="category-link" href="/categories/%E6%8A%80%E6%9C%AF%E6%96%87%E7%AB%A0/">技术文章</a>
+
+
+    
+</div>
+
+    
+</div>
+
+    
+    <div class="post-content markdown">
+        <div class="main-content-wrap">
+            <!-- excerpt -->
+</p>
+
+<p>在ES5中，我们只能直接给变量赋值。但到了ES6，可以通过某种模式匹配来从数组或对象中提取出来指定值，这就叫做变量的解构赋值。</p>
+<h4 id="1、数组的解构赋值"><a href="#1、数组的解构赋值" class="headerlink" title="1、数组的解构赋值"></a>1、数组的解构赋值</h4><p>数组可以按照位置进行解构赋值，如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">let [a, b] = [1, 3];</span><br><span class="line">// a = 1, b = 3</span><br><span class="line"></span><br><span class="line">let [a, ...b] = [1, 2, 3, 4];</span><br><span class="line">// a = 1, b = [2, 3, 4]</span><br></pre></td></tr></table></figure>
+<p>如果对应的位置没有对应的值，则变量的值被赋为undefined。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">let [a, b, c] = [1, 2];</span><br><span class="line">// a = 1, b = 2, c = undefined</span><br></pre></td></tr></table></figure>
+<p>还可以只解构数组的一部分，这种叫做不完全解构。如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">let [e, f] = [3, 4, 5, 6];</span><br><span class="line">// e = 3, f = 4</span><br></pre></td></tr></table></figure>
+<p>因为数组是一种特殊的对象，所以数组也可以进行对象解构（对象解构赋值在下节介绍）。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">let &#123;0: first, 1: second&#125; = [1, 3, 5, 7];</span><br><span class="line">first // 1</span><br><span class="line">second // 3</span><br></pre></td></tr></table></figure>
+<h5 id="默认值"><a href="#默认值" class="headerlink" title="默认值"></a>默认值</h5><p>解构赋值还可以给变量指定默认值，只有当数组中对应位置的值<span class="highlight-text danger">完全等于</span>（===）undefined时，默认值才会生效。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">let [a = 100, b = 200] = [0, null];</span><br><span class="line">// a = 0, b = 200</span><br></pre></td></tr></table></figure>
+<p>因为null不是完全等于undefined，所以上述b设置的默认值200并没有生效。下面两种情况，b设置的默认值都会生效。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">let [a = 100, b = 200] = [0, undefined];</span><br><span class="line">let [a = 100, b= 200] = [0];</span><br><span class="line">// a = 0, b = 200</span><br></pre></td></tr></table></figure>
+<div class="alert info"><p>如果默认值是一个表达式，则该表达式是惰性求值的，即只有在默认值生效时才会去执行表达式求值。</p>
+</div>
+
+<h4 id="2、对象的解构赋值"><a href="#2、对象的解构赋值" class="headerlink" title="2、对象的解构赋值"></a>2、对象的解构赋值</h4><p>不同于数组按照位置来解构赋值，对象的解构赋值和位置无关，只有当变量和对象属性匹配时，才能取到正确的值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">let &#123;foo, bar&#125; = &#123;foo: &apos;Jason&apos;, bar: &apos;Jack&apos;&#125;;</span><br><span class="line">foo // &apos;Jason&apos;</span><br><span class="line">bar // &apos;Jack&apos;</span><br></pre></td></tr></table></figure>
+<p>和数组一样，如果没有对应的值，则变量被赋值为undefined。</p>
+<p>如果不想被赋值的变量名和对象的属性名一样，可以这样来写：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">let &#123;foo: baz, bar: boo&#125; = &#123;foo: &apos;Jason&apos;, bar: &apos;Jack&apos;&#125;;</span><br><span class="line">baz // &apos;Jason&apos;</span><br><span class="line">boo // &apos;Jack&apos;</span><br></pre></td></tr></table></figure>
+<p>也就是说，前者是匹配的模式，真正被赋值的变量是后者。因此，最开始的那种形式是下面这种形式的简写：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">let &#123;foo: foo, bar: bar&#125; = &#123;foo: &apos;Jason&apos;, bar: &apos;Jack&apos;&#125;;</span><br></pre></td></tr></table></figure>
+
+<h5 id="默认值-1"><a href="#默认值-1" class="headerlink" title="默认值"></a>默认值</h5><p>和数组一样，对象的解构赋值也可以指定默认值。默认值生效的方式同样是对应属性值完全等于（===）undefined。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">let &#123;foo = &apos;Jade&apos;, bar = &apos;John&apos;&#125; = &#123;foo: undefined, bar: &apos;Jack&apos;&#125;;</span><br><span class="line">foo // &apos;Jade&apos;</span><br><span class="line">bar // &apos;Jack&apos;</span><br></pre></td></tr></table></figure>
+<div class="alert info"><p>对象的解构赋值是可以取到继承来的属性值的。</p>
+</div>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">const foo = &#123;</span><br><span class="line">    name: &apos;Jason&apos;</span><br><span class="line">&#125;;</span><br><span class="line">const baz = Object.create(foo);</span><br><span class="line">let &#123;name&#125; = baz;</span><br><span class="line">name // &apos;Jason&apos;</span><br></pre></td></tr></table></figure>
+<p>baz自身是没有name属性的，但是它的原型foo上有该属性，因此解构赋值可以取到。</p>
+<h4 id="3、字符串的解构赋值"><a href="#3、字符串的解构赋值" class="headerlink" title="3、字符串的解构赋值"></a>3、字符串的解构赋值</h4><p>字符串在解构赋值时，是被当做类似数组的对象来处理的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">let [first, second] = &apos;Jason&apos;;</span><br><span class="line">first // J</span><br><span class="line">second // a</span><br></pre></td></tr></table></figure>
+<p>类数组对象都会有一个length属性，所以还可以解构到这个属性值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">let &#123;length: len&#125; = &apos;hello&apos;;</span><br><span class="line">len // 5</span><br></pre></td></tr></table></figure>
+
+<h4 id="4、数值和布尔值的解构赋值"><a href="#4、数值和布尔值的解构赋值" class="headerlink" title="4、数值和布尔值的解构赋值"></a>4、数值和布尔值的解构赋值</h4><div class="alert info"><p>解构赋值时，如果等号右边不是对象，则先会被转为对象。</p>
+</div>
+<p>因此，数值和布尔值会被先转化为对象，然后进行解构赋值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">let &#123;toString: s&#125; = 1111;</span><br><span class="line">s === Number.prototype.toString; // true</span><br><span class="line"></span><br><span class="line">let &#123;toString: s2&#125; = true;</span><br><span class="line">s2 === Boolean.prototype.toString; // true</span><br></pre></td></tr></table></figure>
+
+<h4 id="5、函数参数的解构赋值"><a href="#5、函数参数的解构赋值" class="headerlink" title="5、函数参数的解构赋值"></a>5、函数参数的解构赋值</h4><p>函数参数也是可以使用解构赋值的。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">function foo(&#123;name, age&#125;) &#123;</span><br><span class="line">    console.log(name, age);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上述函数的参数是一个对象，当参数传进来时就通过对象解构赋值拿到了name和age属性值，函数内部就可以直接使用了。<br>函数参数的解构赋值也可以指定默认值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">function foo(&#123;name = &apos;jason&apos;, age = 18&#125;) &#123;</span><br><span class="line">    console.log(name, age);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>同样，只有当右边属性值完全等于（===）undefined时，参数默认值才会生效。</p>
+<h4 id="6、总结"><a href="#6、总结" class="headerlink" title="6、总结"></a>6、总结</h4><p>1、对于数组的解构赋值，只要等号右边的数据部署了Iterator接口（如string，Set，Map等），就可以使用数组解构赋值。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">function* gen() &#123;</span><br><span class="line">    let pre = 0, cur = 1;</span><br><span class="line">    while(true) &#123;</span><br><span class="line">        yield pre;</span><br><span class="line">        [pre, cur] = [cur, pre + cur];</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">let [a, b, c, d] = gen();</span><br><span class="line">a // 0</span><br><span class="line">b // 1</span><br><span class="line">c // 1</span><br><span class="line">d // 2</span><br></pre></td></tr></table></figure>
+<p>上面的gen是一个Iterator迭代器生成函数，所以它生成的迭代器可以进行数组解构赋值。而如果等号右边数据不具备Iterator接口，则数组解构赋值会报错。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">let [first] = 111;</span><br><span class="line">let [second] = true;</span><br><span class="line">let [third] = NaN;</span><br><span class="line">let [forth] = &#123;&#125;;</span><br><span class="line">// TypeError: 111 is not iterable</span><br></pre></td></tr></table></figure>
+<p>根据解构赋值的规则，前三个会被转为对象，但是没有部署Iterator接口，最后一个本身是个对象，也没有部署Iterator接口。所以都会报错。<br>2、对于对象解构赋值。因为null和undefined是不能转为对象的，所以对它俩进行对象解构赋值会报错。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">let &#123;toString: s1&#125; = null;</span><br><span class="line">let &#123;toString: s2&#125; = undefined;</span><br><span class="line">// TypeError: Cannot destructure property `toString` of &apos;undefined&apos; or &apos;null&apos;.</span><br></pre></td></tr></table></figure>
+            
+
+
+        </div>
+    </div>
+    <div id="post-footer" class="post-footer main-content-wrap">
+        
+            <div class="post-footer-tags">
+                <span class="text-color-light text-small">标签</span><br/>
+                
+    <a class="tag tag--primary tag--small t-link" href="/tags/ES6/" rel="tag">ES6</a> <a class="tag tag--primary tag--small t-link" href="/tags/Javascript/" rel="tag">Javascript</a> <a class="tag tag--primary tag--small t-link" href="/tags/%E8%A7%A3%E6%9E%84%E8%B5%8B%E5%80%BC/" rel="tag">解构赋值</a>
+
+            </div>
+        
+        
+            <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/12/11/string-extend/"
+                    data-tooltip="ES6学习系列：字符串扩展及其新增方法"
+                    aria-label="上一篇: ES6学习系列：字符串扩展及其新增方法"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/11/04/sorting-algorithm/"
+                    data-tooltip="常见的几种排序算法"
+                    aria-label="下一篇: 常见的几种排序算法"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Diesen Beitrag teilen"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://wangjun9662.com/2019/11/12/assignment/"
+                    title="分享到 Facebook"
+                    aria-label="分享到 Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://wangjun9662.com/2019/11/12/assignment/"
+                    title="分享到 Twitter"
+                    aria-label="分享到 Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://wangjun9662.com/2019/11/12/assignment/"
+                    title="分享到 Google+"
+                    aria-label="分享到 Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+        
+        
+    </div>
+</article>
+
+
+
+                <footer id="footer" class="main-content-wrap">
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="copyrights">
+        Copyrights &copy; 2020 Jason. All Rights Reserved.
+    </span>
+    <br>
+    <span id="busuanzi_container_site_uv">
+            欢迎你，Jason 的第 <span id="busuanzi_value_site_uv"></span> 位朋友！
+    </span>
+    <span id="busuanzi_container_site_pv">
+        网站总访问量 <span id="busuanzi_value_site_pv"></span> 人次
+    </span>
+</footer>
+
+            </div>
+            
+                <div id="bottom-bar" class="post-bottom-bar" data-behavior="5">
+                    <div class="post-actions-wrap">
+    <nav>
+        <ul class="post-actions post-action-nav">
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/12/11/string-extend/"
+                    data-tooltip="ES6学习系列：字符串扩展及其新增方法"
+                    aria-label="上一篇: ES6学习系列：字符串扩展及其新增方法"
+                >
+                    
+                        <i class="fa fa-angle-left" aria-hidden="true"></i>
+                        <span class="hide-xs hide-sm text-small icon-ml">上一篇</span>
+                    </a>
+            </li>
+            <li class="post-action">
+                
+                    
+                <a
+                    class="post-action-btn btn btn--default tooltip--top"
+                    href="/2019/11/04/sorting-algorithm/"
+                    data-tooltip="常见的几种排序算法"
+                    aria-label="下一篇: 常见的几种排序算法"
+                >
+                    
+                        <span class="hide-xs hide-sm text-small icon-mr">下一篇</span>
+                        <i class="fa fa-angle-right" aria-hidden="true"></i>
+                    </a>
+            </li>
+        </ul>
+    </nav>
+    <ul class="post-actions post-action-share">
+        <li class="post-action hide-lg hide-md hide-sm">
+            <a
+                class="post-action-btn btn btn--default btn-open-shareoptions"
+                href="#btn-open-shareoptions"
+                aria-label="Diesen Beitrag teilen"
+            >
+                <i class="fa fa-share-alt" aria-hidden="true"></i>
+            </a>
+        </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://www.facebook.com/sharer/sharer.php?u=https://wangjun9662.com/2019/11/12/assignment/"
+                    title="分享到 Facebook"
+                    aria-label="分享到 Facebook"
+                >
+                    <i class="fab fa-facebook" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://twitter.com/intent/tweet?text=https://wangjun9662.com/2019/11/12/assignment/"
+                    title="分享到 Twitter"
+                    aria-label="分享到 Twitter"
+                >
+                    <i class="fab fa-twitter" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+            
+            
+            <li class="post-action hide-xs">
+                <a
+                    class="post-action-btn btn btn--default"
+                    target="new" href="https://plus.google.com/share?url=https://wangjun9662.com/2019/11/12/assignment/"
+                    title="分享到 Google+"
+                    aria-label="分享到 Google+"
+                >
+                    <i class="fab fa-google-plus" aria-hidden="true"></i>
+                </a>
+            </li>
+        
+        
+        <li class="post-action">
+            
+                <a class="post-action-btn btn btn--default" href="#" aria-label="Nach oben">
+            
+                <i class="fa fa-list" aria-hidden="true"></i>
+            </a>
+        </li>
+    </ul>
+</div>
+
+
+                </div>
+                
+    <div id="share-options-bar" class="share-options-bar" data-behavior="5">
+        <i id="btn-close-shareoptions" class="fa fa-times"></i>
+        <ul class="share-options">
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://www.facebook.com/sharer/sharer.php?u=https://wangjun9662.com/2019/11/12/assignment/"
+                        aria-label="分享到 Facebook"
+                    >
+                        <i class="fab fa-facebook" aria-hidden="true"></i><span>分享到 Facebook</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://twitter.com/intent/tweet?text=https://wangjun9662.com/2019/11/12/assignment/"
+                        aria-label="分享到 Twitter"
+                    >
+                        <i class="fab fa-twitter" aria-hidden="true"></i><span>分享到 Twitter</span>
+                    </a>
+                </li>
+            
+                
+                
+                <li class="share-option">
+                    <a
+                        class="share-option-btn"
+                        target="new"
+                        href="https://plus.google.com/share?url=https://wangjun9662.com/2019/11/12/assignment/"
+                        aria-label="分享到 Google+"
+                    >
+                        <i class="fab fa-google-plus" aria-hidden="true"></i><span>分享到 Google+</span>
+                    </a>
+                </li>
+            
+        </ul>
+    </div>
+
+
+            
+        </div>
+        
+
+
+    
+        
+    
+
+<div id="about">
+    <div id="about-card">
+        <div id="about-btn-close">
+            <i class="fa fa-times"></i>
+        </div>
+        
+            <img id="about-card-picture" src="/assets/images/avatar.jpeg" alt="作者的图片"/>
+        
+            <h4 id="about-card-name">Jason</h4>
+        
+            <div id="about-card-bio"><p>我相信，我终将富有！</p>
+</div>
+        
+        
+            <div id="about-card-job">
+                <i class="fa fa-briefcase"></i>
+                <br/>
+                <p>前端工程师</p>
+
+            </div>
+        
+        
+            <div id="about-card-location">
+                <i class="fa fa-map-marker-alt"></i>
+                <br/>
+                北京-海淀
+            </div>
+        
+    </div>
+</div>
+
+        
+        
+<div id="cover" style="background-image:url('/assets/images/bg3.jpg');"></div>
+        <!--SCRIPTS-->
+<script src="/assets/js/script-v2pflyivt9jjoigks6lwegsczwfxqdlnrixsox9vixg7cleyju84davvjqsl.min.js"></script>
+<!--SCRIPTS END-->
+
+
+
+
+
+    </body>
+</html>
